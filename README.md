@@ -1,7 +1,7 @@
-ember-data-fork
+Ember Data Fork
 ==============================================================================
 
-[Short description of the addon.]
+Track Ember Data model changes, accept or reject them with a simple fork interface.
 
 
 Compatibility
@@ -23,7 +23,22 @@ ember install ember-data-fork
 Usage
 ------------------------------------------------------------------------------
 
-[Longer description of how to use the addon in apps.]
+Just call `fork()` on your model and then use the returned fork in the same way as
+you would use Ember Data models.
+
+```javascript
+let model = this.store.findRecord('person', 1);
+let fork = model.fork();
+
+fork.set('firstName', 'Lenny');
+fork.children.addObject(
+  this.store.createRecord('person', {
+    firstName: 'Oliver'
+  })
+);
+
+fork.isDirty; // true
+```
 
 
 Contributing
