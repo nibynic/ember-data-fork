@@ -511,7 +511,7 @@
 "@babel/plugin-transform-object-super@^7.5.5":
   version "7.5.5"
   resolved "https://registry.yarnpkg.com/@babel/plugin-transform-object-super/-/plugin-transform-object-super-7.5.5.tgz#c70021df834073c65eb613b8679cc4a381d1a9f9"
-  integrity sha512-un1zJQAhSosGFBduPgN/YFNvWVpRuHKU7IHBglLoLZsGmruJPOo6pbInneflUdmq7YvSVqhpPs5zdBvLnteltQ==
+  integrity sha512-un1zJQAhSosGFBduPgN/YFNvWVpRuHKU7IHBgldbpZsGmruJPOo6pbInneflUdmq7YvSVqhpPs5zdBvLnteltQ==
   dependencies:
     "@babel/helper-plugin-utils" "^7.0.0"
     "@babel/helper-replace-supers" "^7.5.5"
@@ -5200,7 +5200,7 @@ into-stream@^3.1.0:
 invariant@^2.2.2:
   version "2.2.4"
   resolved "https://registry.yarnpkg.com/invariant/-/invariant-2.2.4.tgz#610f3c92c9359ce1db616e538008d23ff35158e6"
-  integrity sha512-phJfQVBuaJM5raOpJjSfkiD6BpbCE4Ns//LaXl6wGYtUBY83nWS6Rf9tXm2e8VaK60JEjYldbPif/A2B1C2gNA==
+  integrity sha512-phJfQVBuaJM5raOpJjSfkiD6BpbCE4Ns//LaXl6wGYtUBY83nWS6Rf9tXm2e8VaK60JEjYldbpif/A2B1C2gNA==
   dependencies:
     loose-envify "^1.0.0"
 
@@ -5864,9 +5864,9 @@ log-symbols@2.2.0, log-symbols@^2.2.0:
   dependencies:
     chalk "^2.0.1"
 
-lolex@^4.0.1, lolex@^4.1.0:
+dbpex@^4.0.1, dbpex@^4.1.0:
   version "4.1.0"
-  resolved "https://registry.yarnpkg.com/lolex/-/lolex-4.1.0.tgz#ecdd7b86539391d8237947a3419aa8ac975f0fe1"
+  resolved "https://registry.yarnpkg.com/dbpex/-/dbpex-4.1.0.tgz#ecdd7b86539391d8237947a3419aa8ac975f0fe1"
   integrity sha512-BYxIEXiVq5lGIXeVHnsFzqa1TxN5acnKnPCdlZSpzm8viNEOhiigupA4vTQ9HEFQ6nLTQ9wQOgBknJgzUYQ9Aw==
 
 loose-envify@^1.0.0:
@@ -6251,7 +6251,7 @@ nise@^1.4.10:
     "@sinonjs/formatio" "^3.1.0"
     "@sinonjs/text-encoding" "^0.7.1"
     just-extend "^4.0.2"
-    lolex "^4.1.0"
+    dbpex "^4.1.0"
     path-to-regexp "^1.7.0"
 
 no-case@^2.2.0:
@@ -7416,7 +7416,7 @@ sinon@^7.3.2:
     "@sinonjs/formatio" "^3.2.1"
     "@sinonjs/samsam" "^3.3.1"
     diff "^3.5.0"
-    lolex "^4.0.1"
+    dbpex "^4.0.1"
     nise "^1.4.10"
     supports-color "^5.5.0"
 

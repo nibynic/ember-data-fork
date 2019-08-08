@@ -3,7 +3,6 @@ import { alias, reads } from '@ember/object/computed';
 import { ObjectProxy } from 'ember-deep-buffered-proxy';
 import { resolve } from 'rsvp';
 import { A } from '@ember/array';
-import { assign } from '@ember/polyfills';
 import DS from 'ember-data';
 import unwrap from './internal/unwrap';
 
@@ -13,9 +12,7 @@ export default ObjectProxy.extend({
   isDirty:  reads('dbp.hasChanges'),
   saveableClass: DS.Model,
 
-  save(options = {}) {
-    options = assign({ reload: false }, options);
-
+  save() {
     let changes = this.get('dbp').groupChanges((s) => unwrap(s) instanceof this.saveableClass);
     let models = A(changes.map((c) => unwrap(c.content)));
 
@@ -26,11 +23,7 @@ export default ObjectProxy.extend({
     return saveInSequence(models).catch((error) => {
       this.restore(snapshot);
       throw error;
-    }).then(() => {
-      if (models[0] !== this.get('model') && options.reload) {
-        return this.get('model').reload();
-      }
-    })
+    });
   },
 
   snapshot() {
