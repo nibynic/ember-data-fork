@@ -2146,6 +2146,14 @@ broccoli-debug@^0.6.4, broccoli-debug@^0.6.5:
     symlink-or-copy "^1.1.8"
     tree-sync "^1.2.2"
 
+broccoli-file-creator@^1.1.1:
+  version "1.2.0"
+  resolved "https://registry.yarnpkg.com/broccoli-file-creator/-/broccoli-file-creator-1.2.0.tgz#27f1b25b1b00e7bb7bf3d5d7abed5f4d5388df4d"
+  integrity sha512-l9zthHg6bAtnOfRr/ieZ1srRQEsufMZID7xGYRW3aBDv3u/3Eux+Iawl10tAGYE5pL9YB4n5X4vxkp6iNOoZ9g==
+  dependencies:
+    broccoli-plugin "^1.1.0"
+    mkdirp "^0.5.1"
+
 broccoli-file-creator@^2.1.1:
   version "2.1.1"
   resolved "https://registry.yarnpkg.com/broccoli-file-creator/-/broccoli-file-creator-2.1.1.tgz#7351dd2496c762cfce7736ce9b49e3fce0c7b7db"
@@ -3293,7 +3301,7 @@ ember-cli-babel-plugin-helpers@^1.0.0, ember-cli-babel-plugin-helpers@^1.1.0:
   resolved "https://registry.yarnpkg.com/ember-cli-babel-plugin-helpers/-/ember-cli-babel-plugin-helpers-1.1.0.tgz#de3baedd093163b6c2461f95964888c1676325ac"
   integrity sha512-Zr4my8Xn+CzO0gIuFNXji0eTRml5AxZUTDQz/wsNJ5AJAtyFWCY4QtKdoELNNbiCVGt1lq5yLiwTm4scGKu6xA==
 
-ember-cli-babel@^6.0.0-beta.4, ember-cli-babel@^6.0.0-beta.7, ember-cli-babel@^6.16.0, ember-cli-babel@^6.6.0, ember-cli-babel@^6.8.1:
+ember-cli-babel@^6.0.0-beta.4, ember-cli-babel@^6.0.0-beta.7, ember-cli-babel@^6.16.0, ember-cli-babel@^6.3.0, ember-cli-babel@^6.6.0, ember-cli-babel@^6.8.1:
   version "6.18.0"
   resolved "https://registry.yarnpkg.com/ember-cli-babel/-/ember-cli-babel-6.18.0.tgz#3f6435fd275172edeff2b634ee7b29ce74318957"
   integrity sha512-7ceC8joNYxY2wES16iIBlbPSxwKDBhYwC8drU3ZEvuPDMwVv1KzxCNu1fvxyFEBWhwaRNTUxSCsEVoTd9nosGA==
@@ -3677,12 +3685,13 @@ ember-data@^3.11.4:
     ember-cli-typescript "^2.0.1"
     ember-inflector "^3.0.0"
 
-ember-deep-buffered-proxy@^0.0.1:
-  version "0.0.1"
-  resolved "https://registry.yarnpkg.com/ember-deep-buffered-proxy/-/ember-deep-buffered-proxy-0.0.1.tgz#54dacf5e9748806351a800ad77926a1461c653f5"
-  integrity sha512-h2BzX5Q/3U/08BBlwgmIzbh4EfoVdRbBGebirQsfCfJpvYzQc/7uG+kt+DdsCMQlRn6bZMO39qNV8EGCjth2KQ==
+ember-deep-buffered-proxy@^0.0.2:
+  version "0.0.2"
+  resolved "https://registry.yarnpkg.com/ember-deep-buffered-proxy/-/ember-deep-buffered-proxy-0.0.2.tgz#26ede69c1756c2edad12a51abb249bcda55d2d4d"
+  integrity sha512-jLGFKygApm0HmVzyTrPnIOPIyidDCpgT5To0j+dx60rd+ZnCcthpuF6F1oyIxzc17qhdBiGQB46nwJLZVvW1sw==
   dependencies:
     ember-cli-babel "^7.7.3"
+    ember-get-config "^0.2.4"
 
 ember-disable-prototype-extensions@^1.1.3:
   version "1.1.3"
@@ -3695,6 +3704,14 @@ ember-export-application-global@^2.0.0:
   integrity sha1-jW12GayKGj+MQwA1Sesh6+1oW9I=
   dependencies:
     ember-cli-babel "^6.0.0-beta.7"
+
+ember-get-config@^0.2.4:
+  version "0.2.4"
+  resolved "https://registry.yarnpkg.com/ember-get-config/-/ember-get-config-0.2.4.tgz#118492a2a03d73e46004ed777928942021fe1ecd"
+  integrity sha1-EYSSoqA9c+RgBO13eSiUICH+Hs0=
+  dependencies:
+    broccoli-file-creator "^1.1.1"
+    ember-cli-babel "^6.3.0"
 
 ember-inflector@^3.0.0:
   version "3.0.1"
@@ -5864,9 +5881,9 @@ log-symbols@2.2.0, log-symbols@^2.2.0:
   dependencies:
     chalk "^2.0.1"
 
-dbpex@^4.0.1, dbpex@^4.1.0:
+lolex@^4.0.1, lolex@^4.1.0:
   version "4.1.0"
-  resolved "https://registry.yarnpkg.com/dbpex/-/dbpex-4.1.0.tgz#ecdd7b86539391d8237947a3419aa8ac975f0fe1"
+  resolved "https://registry.yarnpkg.com/lolex/-/lolex-4.1.0.tgz#ecdd7b86539391d8237947a3419aa8ac975f0fe1"
   integrity sha512-BYxIEXiVq5lGIXeVHnsFzqa1TxN5acnKnPCdlZSpzm8viNEOhiigupA4vTQ9HEFQ6nLTQ9wQOgBknJgzUYQ9Aw==
 
 loose-envify@^1.0.0:
@@ -6251,7 +6268,7 @@ nise@^1.4.10:
     "@sinonjs/formatio" "^3.1.0"
     "@sinonjs/text-encoding" "^0.7.1"
     just-extend "^4.0.2"
-    dbpex "^4.1.0"
+    lolex "^4.1.0"
     path-to-regexp "^1.7.0"
 
 no-case@^2.2.0:
@@ -7416,7 +7433,7 @@ sinon@^7.3.2:
     "@sinonjs/formatio" "^3.2.1"
     "@sinonjs/samsam" "^3.3.1"
     diff "^3.5.0"
-    dbpex "^4.0.1"
+    lolex "^4.0.1"
     nise "^1.4.10"
     supports-color "^5.5.0"
 
