@@ -9,19 +9,19 @@ import unwrap from './internal/unwrap';
 
 export default ObjectProxy.extend({
 
-  model:    alias('subject'),
-  isDirty:  reads('hasChanges'),
+  model:    alias('content'),
+  isDirty:  reads('dbp.hasChanges'),
   saveableClass: DS.Model,
 
   save(options = {}) {
     options = assign({ reload: false }, options);
 
-    let changes = this.groupChanges((s) => unwrap(s) instanceof this.saveableClass);
-    let models = A(changes.map((c) => unwrap(c.subject)));
+    let changes = this.get('dbp').groupChanges((s) => unwrap(s) instanceof this.saveableClass);
+    let models = A(changes.map((c) => unwrap(c.content)));
 
     let snapshot = this.snapshot();
 
-    this.applyChanges();
+    this.get('dbp').applyChanges();
 
     return saveInSequence(models).catch((error) => {
       this.restore(snapshot);
@@ -34,16 +34,16 @@ export default ObjectProxy.extend({
   },
 
   snapshot() {
-    return this.groupChanges((s) => s === this)[0];
+    return this.get('dbp').groupChanges((s) => s === this)[0];
   },
 
   restore(snapshot) {
-    setProperties(this.get('subject'), snapshot.was);
+    setProperties(this.get('content'), snapshot.was);
     setProperties(this, snapshot.is);
   },
 
   dismiss() {
-    this.discardChanges();
+    this.get('dbp').discardChanges();
   }
 });
 

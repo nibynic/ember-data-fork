@@ -15,9 +15,7 @@ module('Unit | Model | Concerns | fork', function() {
       lastName: 'Babranicki',
       save() {}
     });
-    let fork = Fork.create({
-      model: model
-    });
+    let fork = Fork.wrap(model);
 
     run(() => {
       fork.set('firstName', 'Teofil');
@@ -60,10 +58,8 @@ module('Unit | Model | Concerns | fork', function() {
       reload,
       save() {}
     });
-    let fork = Fork.create({
-      model: model,
-      saveableClass: Model
-    });
+    let fork = Fork.wrap(model);
+    fork.set('saveableClass', Model);
 
     run(() => {
       fork.get('phoneNumbers.firstObject').set('number', '+48222222222');
