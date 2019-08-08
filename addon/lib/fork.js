@@ -1,19 +1,17 @@
-import { setProperties } from '@ember/object';
-import { alias, reads } from '@ember/object/computed';
-import { ObjectProxy } from 'ember-deep-buffered-proxy';
+import { computed, setProperties } from '@ember/object';
+import { reads } from '@ember/object/computed';
+import { ObjectProxy, ArrayProxy } from 'ember-deep-buffered-proxy';
 import { resolve } from 'rsvp';
-import { A } from '@ember/array';
+import { A, isArray } from '@ember/array';
 import DS from 'ember-data';
 import unwrap from './internal/unwrap';
+import { assign } from '@ember/polyfills';
 
-export default ObjectProxy.extend({
-
-  model:    alias('content'),
+const Fork = ObjectProxy.extend({
   isDirty:  reads('dbp.hasChanges'),
-  saveableClass: DS.Model,
 
   save() {
-    let changes = this.get('dbp').groupChanges((s) => unwrap(s) instanceof this.saveableClass);
+    let changes = this.get('dbp').groupChanges((s) => unwrap(s) instanceof DS.Model);
     let models = A(changes.map((c) => unwrap(c.content)));
 
     let snapshot = this.snapshot();
@@ -37,6 +35,29 @@ export default ObjectProxy.extend({
 
   dismiss() {
     this.get('dbp').discardChanges();
+  },
+
+  deleteRecord() {
+    this.set('markedForDeleteRecord', true);
+    this.notifyPropertyChange('markedForDeleteRecord');
+  },
+
+  isDeleted: computed('markedForDeleteRecord', 'content.isDeleted', function() {
+    return this.get('markedForDeleteRecord') || this.get('content.isDeleted');
+  })
+}).reopenClass({
+  wrap(content, options = {}) {
+    return this._super(
+      content, assign({
+        proxyClassFor(obj) {
+          if (obj instanceof DS.Model) {
+            return Fork;
+          } else {
+            return isArray(obj) ? ArrayProxy : ObjectProxy;
+          }
+        }
+      }, options)
+    );
   }
 });
 
@@ -50,3 +71,5 @@ function saveInSequence(models, i = 0) {
     );
   }
 }
+
+export default Fork;

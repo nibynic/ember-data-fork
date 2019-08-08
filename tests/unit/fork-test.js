@@ -1,15 +1,34 @@
-import EmberObject from '@ember/object';
 import Fork from 'ember-data-fork';
+import { setupTest } from 'ember-qunit';
 import { module, test } from 'qunit';
 import { resolve, reject } from 'rsvp';
 import { settled } from '@ember/test-helpers';
 import { run } from '@ember/runloop';
+import sinon from 'sinon';
 
-module('Unit | Model | Concerns | fork', function() {
+module('Unit | Model | Concerns | fork', function(hooks) {
+  setupTest(hooks);
+
+  hooks.beforeEach(function() {
+    this.store = this.owner.lookup('service:store');
+  });
+
+  test('it wraps all nested models in a fork', async function (assert) {
+    let model = this.store.createRecord('person', {
+      firstName: 'Jan',
+      parent: this.store.createRecord('person', {
+        firstName: 'Jack'
+      })
+    });
+    let fork = Fork.wrap(model);
+
+    assert.ok(fork instanceof Fork);
+    assert.ok(fork.get('parent') instanceof Fork);
+  });
 
   test('it applies changes on model and saves', async function (assert) {
     let didSave, didFail;
-    let model = EmberObject.create({
+    let model = this.store.createRecord('person', {
       firstName: 'Jan',
       lastName: 'Babranicki',
       save() {}
@@ -42,4 +61,29 @@ module('Unit | Model | Concerns | fork', function() {
     fork.dismiss();
     assert.notOk(fork.get('isDirty'), 'after rollback should be marked as pristine');
   });
+
+  test('it buffers deleteRecord calls', async function (assert) {
+    let model = this.store.createRecord('person', {
+      firstName: 'Jan'
+    });
+    let deleteSpy = sinon.spy(model, 'deleteRecord');
+    let fork = Fork.wrap(model);
+
+    assert.notOk(fork.get('isDeleted'));
+    assert.notOk(model.get('isDeleted'));
+
+    fork.deleteRecord();
+
+    assert.ok(deleteSpy.notCalled);
+    assert.ok(fork.get('isDeleted'));
+    assert.notOk(model.get('isDeleted'));
+
+    fork.save();
+    await settled();
+
+    assert.ok(deleteSpy.calledOnce);
+    assert.ok(fork.get('isDeleted'));
+    assert.ok(model.get('isDeleted'));
+  });
+
 });
