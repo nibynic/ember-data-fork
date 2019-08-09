@@ -11,79 +11,130 @@ module('Unit | Model | Concerns | fork', function(hooks) {
 
   hooks.beforeEach(function() {
     this.store = this.owner.lookup('service:store');
-  });
-
-  test('it wraps all nested models in a fork', async function (assert) {
-    let model = this.store.createRecord('person', {
+    this.model = this.store.createRecord('person', {
       firstName: 'Jan',
       parent: this.store.createRecord('person', {
         firstName: 'Jack'
       })
     });
-    let fork = Fork.wrap(model);
-
-    assert.ok(fork instanceof Fork);
-    assert.ok(fork.get('parent') instanceof Fork);
+    this.fork = Fork.wrap(this.model);
   });
 
-  test('it applies changes on model and saves', async function (assert) {
-    let didSave, didFail;
-    let model = this.store.createRecord('person', {
-      firstName: 'Jan',
-      lastName: 'Babranicki',
-      save() {}
-    });
-    let fork = Fork.wrap(model);
+  test('it wraps all nested models in a fork', async function (assert) {
+    assert.ok(this.fork instanceof Fork);
+    assert.ok(this.fork.get('parent') instanceof Fork);
+  });
 
+  test('it applies changes', async function (assert) {
     run(() => {
-      fork.set('firstName', 'Teofil');
+      this.fork.set('firstName', 'Teofil');
     });
 
-    assert.equal(model.get('firstName'), 'Jan', 'should not apply changes until save');
+    assert.equal(this.model.get('firstName'), 'Jan');
+    assert.ok(this.fork.get('isDirty'));
 
-    model.save = reject;
-    fork.save().catch(() => didFail = true);
-    await settled();
+    this.fork.apply();
 
-    assert.equal(model.get('firstName'), 'Jan', 'should not apply changes after failed save');
-    assert.ok(fork.get('isDirty'), 'should be marked as dirty');
-    assert.ok(didFail, 'should reject save promise');
-
-    model.save = resolve;
-    fork.save().then(() => didSave = true);
-    await settled();
-
-    assert.equal(model.get('firstName'), 'Teofil', 'should apply changes after successful save');
-    assert.notOk(fork.get('isDirty'), 'should be marked as pristine');
-    assert.ok(didSave, 'should resolve save promise');
-
-    fork.set('lastName', 'Rogal');
-    fork.dismiss();
-    assert.notOk(fork.get('isDirty'), 'after rollback should be marked as pristine');
+    assert.equal(this.model.get('firstName'), 'Teofil');
+    assert.notOk(this.fork.get('isDirty'));
   });
 
-  test('it buffers deleteRecord calls', async function (assert) {
-    let model = this.store.createRecord('person', {
-      firstName: 'Jan'
+  test('it rolls back changes', async function (assert) {
+    run(() => {
+      this.fork.set('firstName', 'Teofil');
     });
-    let deleteSpy = sinon.spy(model, 'deleteRecord');
-    let fork = Fork.wrap(model);
 
-    assert.notOk(fork.get('isDeleted'));
-    assert.notOk(model.get('isDeleted'));
+    this.fork.rollback();
 
-    fork.deleteRecord();
-
-    assert.ok(deleteSpy.notCalled);
-    assert.ok(fork.get('isDeleted'));
-    assert.notOk(model.get('isDeleted'));
-
-    fork.save();
-    await settled();
-
-    assert.ok(deleteSpy.calledOnce);
-    assert.ok(fork.get('isDeleted'));
-    assert.ok(model.get('isDeleted'));
+    assert.equal(this.fork.get('firstName'), 'Jan');
+    assert.notOk(this.fork.get('isDirty'));
   });
+
+  module('saving', function() {
+    test('it saves all changed records', async function (assert) {
+      let modelSave = sinon.stub(this.model, 'save').returns(resolve());
+      let parentSave = sinon.stub(this.model.parent, 'save').returns(resolve());
+
+      run(() => {
+        this.fork.set('firstName', 'Teofil');
+        this.fork.set('parent.firstName', 'Bruce');
+      });
+
+      this.fork.save().then(
+        () => assert.ok(true, 'should resolve'),
+        () => assert.ok(false)
+      );
+      await settled();
+
+      assert.ok(modelSave.calledOnce);
+      assert.ok(parentSave.calledOnce);
+      assert.equal(this.model.get('firstName'), 'Teofil');
+      assert.equal(this.model.parent.get('firstName'), 'Bruce');
+      assert.notOk(this.fork.get('isDirty'));
+    });
+
+    test('if save fails it reverts to pre-save state', async function (assert) {
+      sinon.stub(this.model, 'save').returns(resolve());
+      sinon.stub(this.model.parent, 'save').returns(reject());
+      run(() => {
+        this.fork.set('firstName', 'Teofil');
+        this.fork.set('parent.firstName', 'Bruce');
+      });
+
+      this.fork.save().then(
+        () => assert.ok(false),
+        () => assert.ok(true, 'should reject')
+      );
+      await settled();
+
+      assert.equal(this.model.get('firstName'), 'Jan');
+      assert.equal(this.model.get('parent.firstName'), 'Jack');
+      assert.ok(this.fork.get('isDirty'));
+    });
+  });
+
+  module('deleting', function() {
+    test('it buffers deleteRecord calls', function (assert) {
+      let deleteSpy = sinon.spy(this.model, 'deleteRecord');
+
+      assert.notOk(this.fork.get('isDeleted'));
+      assert.notOk(this.model.get('isDeleted'));
+
+      this.fork.deleteRecord();
+
+      assert.ok(deleteSpy.notCalled);
+      assert.ok(this.fork.get('isDeleted'));
+      assert.notOk(this.model.get('isDeleted'));
+
+      this.fork.apply();
+
+      assert.ok(deleteSpy.calledOnce);
+      assert.ok(this.fork.get('isDeleted'));
+      assert.ok(this.model.get('isDeleted'));
+    });
+
+    test('it rolls back deletion', function (assert) {
+      this.fork.deleteRecord();
+      this.fork.rollbackDelete();
+
+      assert.notOk(this.fork.get('isDeleted'));
+      assert.notOk(this.model.get('isDeleted'));
+    });
+
+    test('deletion cannot be rolled back if model is already deleted', function (assert) {
+      this.fork.deleteRecord();
+      this.fork.apply();
+
+      assert.throws(
+        () => this.fork.rollbackDelete(),
+        /cannot rollback delete/
+      );
+
+      assert.ok(this.fork.get('isDeleted'));
+      assert.ok(this.model.get('isDeleted'));
+    });
+  });
+
+
 
 });

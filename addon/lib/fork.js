@@ -6,6 +6,7 @@ import { A, isArray } from '@ember/array';
 import DS from 'ember-data';
 import unwrap from './internal/unwrap';
 import { assign } from '@ember/polyfills';
+import { assert } from '@ember/debug';
 
 const Fork = ObjectProxy.extend({
   isDirty:  reads('dbp.hasChanges'),
@@ -16,7 +17,7 @@ const Fork = ObjectProxy.extend({
 
     let snapshot = this.snapshot();
 
-    this.get('dbp').applyChanges();
+    this.apply();
 
     return saveInSequence(models).catch((error) => {
       this.restore(snapshot);
@@ -33,7 +34,11 @@ const Fork = ObjectProxy.extend({
     setProperties(this, snapshot.is);
   },
 
-  dismiss() {
+  apply() {
+    this.get('dbp').applyChanges();
+  },
+
+  rollback() {
     this.get('dbp').discardChanges();
   },
 
@@ -44,7 +49,13 @@ const Fork = ObjectProxy.extend({
 
   isDeleted: computed('markedForDeleteRecord', 'content.isDeleted', function() {
     return this.get('markedForDeleteRecord') || this.get('content.isDeleted');
-  })
+  }),
+
+  rollbackDelete() {
+    assert('cannot rollback delete, model is already deleted', !this.content.isDeleted);
+    this.set('markedForDeleteRecord', false);
+    this.notifyPropertyChange('markedForDeleteRecord');
+  }
 }).reopenClass({
   wrap(content, options = {}) {
     return this._super(

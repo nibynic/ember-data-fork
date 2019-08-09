@@ -40,6 +40,11 @@ fork.children.addObject(
 );
 
 fork.isDirty; // true
+
+// now you can:
+fork.rollback(); // reset to the initial state
+fork.apply(); // apply changes on the model
+fork.save(); // apply changes and save all changed models
 ```
 
 ### Saving data
@@ -66,6 +71,23 @@ model.isDeleted; // false
 fork.save();
 
 model.isDeleted; // true
+```
+
+To revert unsaved deletion just call `rollbackDelete()`.
+
+```javascript
+let model = this.store.findRecord('person', 1);
+let fork = model.fork();
+
+fork.deleteRecord();
+
+fork.isDeleted; // true
+model.isDeleted; // false
+
+fork.rollbackDelete();
+
+fork.isDeleted; // false
+model.isDeleted; // false
 ```
 
 Contributing
