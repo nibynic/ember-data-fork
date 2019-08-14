@@ -2,6 +2,8 @@ Ember Data Fork
 ==============================================================================
 
 [![Build Status](https://travis-ci.org/nibynic/ember-data-fork.svg?branch=master)](https://travis-ci.org/nibynic/ember-data-fork)
+[![Maintainability](https://api.codeclimate.com/v1/badges/73f9b98e8181fbe1bf60/maintainability)](https://codeclimate.com/github/nibynic/ember-data-fork/maintainability)
+[![npm version](https://badge.fury.io/js/ember-data-fork.svg)](https://badge.fury.io/js/ember-data-fork)
 
 Track Ember Data model changes, accept or reject them with a simple fork interface.
 
