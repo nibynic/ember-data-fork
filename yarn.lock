@@ -3685,10 +3685,10 @@ ember-data@^3.11.4:
     ember-cli-typescript "^2.0.1"
     ember-inflector "^3.0.0"
 
-ember-deep-buffered-proxy@^0.0.3:
-  version "0.0.3"
-  resolved "https://registry.yarnpkg.com/ember-deep-buffered-proxy/-/ember-deep-buffered-proxy-0.0.3.tgz#1437654223ccdc4416bdec9abbb664667414c10a"
-  integrity sha512-9XNU7k19cU4z0Ec44Z1Vg/jEIEgcYPilV7ow7/eDWxpr7xfuVFZL4XofL+46wEezTADOZcn8rLEbFmFi8/31/A==
+ember-deep-buffered-proxy@^0.0.4:
+  version "0.0.4"
+  resolved "https://registry.yarnpkg.com/ember-deep-buffered-proxy/-/ember-deep-buffered-proxy-0.0.4.tgz#06b405ba490cb74557a111d6825843ef5b35fe8c"
+  integrity sha512-5qri2mP8LPWyeN1DG2K2dydB3G9DIKf4JysTqEF6JXolefE6pPLYt47cT4hHT/Xmh+nOE58SVn7uk2uIcclaIg==
   dependencies:
     ember-cli-babel "^7.7.3"
     ember-get-config "^0.2.4"
