@@ -30,7 +30,7 @@ const Fork = ObjectProxy.extend({
   },
 
   restore(snapshot) {
-    setProperties(this.get('content'), snapshot.was);
+    setProperties(this.get('dbp.content'), snapshot.was);
     setProperties(this, snapshot.is);
   },
 
@@ -47,12 +47,12 @@ const Fork = ObjectProxy.extend({
     this.notifyPropertyChange('markedForDeleteRecord');
   },
 
-  isDeleted: computed('markedForDeleteRecord', 'content.isDeleted', function() {
-    return this.get('markedForDeleteRecord') || this.get('content.isDeleted');
+  isDeleted: computed('markedForDeleteRecord', 'dbp.content.isDeleted', function() {
+    return this.get('markedForDeleteRecord') || this.get('dbp.content.isDeleted');
   }),
 
   rollbackDelete() {
-    assert('cannot rollback delete, model is already deleted', !this.content.isDeleted);
+    assert('cannot rollback delete, model is already deleted', !this.get('dbp.content.isDeleted'));
     this.set('markedForDeleteRecord', false);
     this.notifyPropertyChange('markedForDeleteRecord');
   }
