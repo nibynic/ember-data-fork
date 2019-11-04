@@ -58,7 +58,7 @@ const Fork = ObjectProxy.extend({
   }
 }).reopenClass({
   wrap(content, options = {}) {
-    return this._super(
+    let proxy = this._super(
       content, assign({
         proxyClassFor(obj) {
           if (obj instanceof DS.Model) {
@@ -69,6 +69,10 @@ const Fork = ObjectProxy.extend({
         }
       }, options)
     );
+    if (proxy.get('isNew')) {
+      proxy.set('forkIsNew', true);
+    }
+    return proxy;
   }
 });
 

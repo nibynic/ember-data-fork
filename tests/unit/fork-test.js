@@ -25,29 +25,41 @@ module('Unit | Model | Concerns | fork', function(hooks) {
     assert.ok(this.fork.get('parent') instanceof Fork);
   });
 
-  test('it applies changes', async function (assert) {
-    run(() => {
-      this.fork.set('firstName', 'Teofil');
+  module('new records', function() {
+    test('it marks new records as dirty', async function (assert) {
+      assert.ok(this.fork.get('isDirty'));
     });
-
-    assert.equal(this.model.get('firstName'), 'Jan');
-    assert.ok(this.fork.get('isDirty'));
-
-    this.fork.apply();
-
-    assert.equal(this.model.get('firstName'), 'Teofil');
-    assert.notOk(this.fork.get('isDirty'));
   });
 
-  test('it rolls back changes', async function (assert) {
-    run(() => {
-      this.fork.set('firstName', 'Teofil');
+  module('persisted records', function(hooks) {
+    hooks.beforeEach(function() {
+      sinon.stub(this.model, 'isNew').value(false);
     });
 
-    this.fork.rollback();
+    test('it applies changes', async function (assert) {
+      run(() => {
+        this.fork.set('firstName', 'Teofil');
+      });
 
-    assert.equal(this.fork.get('firstName'), 'Jan');
-    assert.notOk(this.fork.get('isDirty'));
+      assert.equal(this.model.get('firstName'), 'Jan');
+      assert.ok(this.fork.get('isDirty'));
+
+      this.fork.apply();
+
+      assert.equal(this.model.get('firstName'), 'Teofil');
+      assert.notOk(this.fork.get('isDirty'));
+    });
+
+    test('it rolls back changes', async function (assert) {
+      run(() => {
+        this.fork.set('firstName', 'Teofil');
+      });
+
+      this.fork.rollback();
+
+      assert.equal(this.fork.get('firstName'), 'Jan');
+      assert.notOk(this.fork.get('isDirty'));
+    });
   });
 
   module('saving', function() {
