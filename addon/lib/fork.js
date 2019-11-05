@@ -4,7 +4,6 @@ import { ObjectProxy, ArrayProxy } from 'ember-deep-buffered-proxy';
 import { resolve } from 'rsvp';
 import { A, isArray } from '@ember/array';
 import DS from 'ember-data';
-import unwrap from './internal/unwrap';
 import { assign } from '@ember/polyfills';
 import { assert } from '@ember/debug';
 
@@ -12,8 +11,8 @@ const Fork = ObjectProxy.extend({
   isDirty:  reads('dbp.hasChanges'),
 
   save() {
-    let changes = this.get('dbp').groupChanges((s) => unwrap(s) instanceof DS.Model);
-    let models = A(changes.map((c) => unwrap(c.content)));
+    let changes = this.get('dbp').groupChanges((s) => s instanceof DS.Model);
+    let models = A(changes.map((c) => c.content));
 
     let snapshot = this.snapshot();
 
