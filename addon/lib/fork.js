@@ -1,9 +1,9 @@
-import { computed, setProperties } from '@ember/object';
-import { reads } from '@ember/object/computed';
+import { setProperties } from '@ember/object';
+import { reads, or } from '@ember/object/computed';
 import { ObjectProxy, ArrayProxy } from 'ember-deep-buffered-proxy';
 import { resolve } from 'rsvp';
 import { A, isArray } from '@ember/array';
-import DS from 'ember-data';
+import Model from '@ember-data/model';
 import { assign } from '@ember/polyfills';
 import { assert } from '@ember/debug';
 
@@ -11,7 +11,7 @@ const Fork = ObjectProxy.extend({
   isDirty:  reads('dbp.hasChanges'),
 
   save() {
-    let changes = this.get('dbp').groupChanges((s) => s instanceof DS.Model);
+    let changes = this.get('dbp').groupChanges((s) => s instanceof Model);
     let models = A(changes.map((c) => c.content));
 
     let snapshot = this.snapshot();
@@ -46,9 +46,7 @@ const Fork = ObjectProxy.extend({
     this.notifyPropertyChange('markedForDeleteRecord');
   },
 
-  isDeleted: computed('markedForDeleteRecord', 'dbp.content.isDeleted', function() {
-    return this.get('markedForDeleteRecord') || this.get('dbp.content.isDeleted');
-  }),
+  isDeleted: or('markedForDeleteRecord', 'dbp.content.isDeleted'),
 
   rollbackDelete() {
     assert('cannot rollback delete, model is already deleted', !this.get('dbp.content.isDeleted'));
@@ -60,7 +58,7 @@ const Fork = ObjectProxy.extend({
     let proxy = this._super(
       content, assign({
         proxyClassFor(obj) {
-          if (obj instanceof DS.Model) {
+          if (obj instanceof Model) {
             return Fork;
           } else {
             return isArray(obj) ? ArrayProxy : ObjectProxy;
