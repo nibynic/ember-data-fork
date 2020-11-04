@@ -31,22 +31,24 @@ Just call `fork()` on your model and then use the returned fork in the same way 
 you would use Ember Data models.
 
 ```javascript
-let model = this.store.findRecord('person', 1);
-let fork = model.fork();
+import { fork } from 'ember-data-fork';
 
-fork.set('firstName', 'Lenny');
-fork.children.addObject(
+let model = this.store.findRecord('person', 1);
+let myFork = fork(model);
+
+myFork.set('firstName', 'Lenny');
+myFork.children.addObject(
   this.store.createRecord('person', {
     firstName: 'Oliver'
   })
 );
 
-fork.isDirty; // true
+myFork.isDirty; // true
 
 // now you can:
-fork.rollback(); // reset to the initial state
-fork.apply(); // apply changes on the model
-fork.save(); // apply changes and save all changed models
+myFork.rollback(); // reset to the initial state
+myFork.apply(); // apply changes on the model
+myFork.save(); // apply changes and save all changed models
 ```
 
 ### Saving data
@@ -62,15 +64,17 @@ You can call `deleteRecord()` on a fork. This won't delete source model until yo
 call `save()` on the fork.
 
 ```javascript
+import { fork } from 'ember-data-fork';
+
 let model = this.store.findRecord('person', 1);
-let fork = model.fork();
+let myFork = fork(model);
 
-fork.deleteRecord();
+myFork.deleteRecord();
 
-fork.isDeleted; // true
+myFork.isDeleted; // true
 model.isDeleted; // false
 
-fork.save();
+myFork.save();
 
 model.isDeleted; // true
 ```
@@ -78,17 +82,19 @@ model.isDeleted; // true
 To revert unsaved deletion just call `rollbackDelete()`.
 
 ```javascript
+import { fork } from 'ember-data-fork';
+
 let model = this.store.findRecord('person', 1);
-let fork = model.fork();
+let myFork = fork(model);
 
-fork.deleteRecord();
+myFork.deleteRecord();
 
-fork.isDeleted; // true
+myFork.isDeleted; // true
 model.isDeleted; // false
 
-fork.rollbackDelete();
+myFork.rollbackDelete();
 
-fork.isDeleted; // false
+myFork.isDeleted; // false
 model.isDeleted; // false
 ```
 

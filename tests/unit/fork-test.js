@@ -1,4 +1,4 @@
-import Fork from 'ember-data-fork';
+import Fork, { fork } from 'ember-data-fork';
 import { setupTest } from 'ember-qunit';
 import { module, test } from 'qunit';
 import { resolve, reject } from 'rsvp';
@@ -21,6 +21,13 @@ module('Unit | Model | Concerns | fork', function(hooks) {
   });
 
   test('it wraps all nested models in a fork', async function (assert) {
+    assert.ok(this.fork instanceof Fork);
+    assert.ok(this.fork.get('parent') instanceof Fork);
+  });
+
+  test('it provides fork() helper method', async function(assert) {
+    this.fork = fork(this.model);
+
     assert.ok(this.fork instanceof Fork);
     assert.ok(this.fork.get('parent') instanceof Fork);
   });
