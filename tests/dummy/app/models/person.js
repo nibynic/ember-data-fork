@@ -1,3 +1,8 @@
-import Model from '@ember-data/model';
+import Model, { belongsTo, hasMany } from '@ember-data/model';
 
-export default Model.extend();
+export default class Person extends Model {
+  @belongsTo('person', { inverse: 'children' })
+    parent;
+  @hasMany('person', { inverse: 'parent' })
+    children;
+}

@@ -72,7 +72,7 @@ module('Unit | Model | Concerns | fork', function(hooks) {
   module('saving', function() {
     test('it saves all changed records', async function (assert) {
       let modelSave = sinon.stub(this.model, 'save').returns(resolve());
-      let parentSave = sinon.stub(this.model.parent, 'save').returns(resolve());
+      let parentSave = sinon.stub(this.model.parent.content, 'save').returns(resolve());
 
       run(() => {
         this.fork.set('firstName', 'Teofil');
@@ -94,7 +94,7 @@ module('Unit | Model | Concerns | fork', function(hooks) {
 
     test('if save fails it reverts to pre-save state', async function (assert) {
       sinon.stub(this.model, 'save').returns(resolve());
-      sinon.stub(this.model.parent, 'save').returns(reject());
+      sinon.stub(this.model.parent.content, 'save').returns(reject());
       run(() => {
         this.fork.set('firstName', 'Teofil');
         this.fork.set('parent.firstName', 'Bruce');

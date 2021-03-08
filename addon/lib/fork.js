@@ -6,13 +6,16 @@ import { A, isArray } from '@ember/array';
 import Model from '@ember-data/model';
 import { assign } from '@ember/polyfills';
 import { assert } from '@ember/debug';
+import EmberObjectProxy from '@ember/object/proxy';
 
 const Fork = ObjectProxy.extend({
   isDirty:  reads('dbp.hasChanges'),
 
   save() {
-    let changes = this.get('dbp').groupChanges((s) => s instanceof Model);
-    let models = A(changes.map((c) => c.content));
+    let changes = this.get('dbp').groupChanges((s) => unwrap(s) instanceof Model);
+    let models = A(changes.map((c) => unwrap(c.content)));
+
+    console.log('changes', changes);
 
     let snapshot = this.snapshot();
 
@@ -29,7 +32,8 @@ const Fork = ObjectProxy.extend({
   },
 
   restore(snapshot) {
-    setProperties(this.get('dbp.content'), snapshot.was);
+    console.log('flatten', flatten(snapshot.was));
+    setProperties(this.get('dbp.content'), flatten(snapshot.was));
     setProperties(this, snapshot.is);
   },
 
@@ -58,10 +62,10 @@ const Fork = ObjectProxy.extend({
     let proxy = this._super(
       content, assign({
         proxyClassFor(obj) {
-          if (obj instanceof Model) {
+          if (unwrap(obj) instanceof Model) {
             return Fork;
           } else {
-            return isArray(obj) ? ArrayProxy : ObjectProxy;
+            return isArray(unwrap(obj)) ? ArrayProxy : ObjectProxy;
           }
         }
       }, options)
@@ -72,6 +76,27 @@ const Fork = ObjectProxy.extend({
     return proxy;
   }
 });
+
+function unwrap(obj) {
+  if (obj && obj instanceof EmberObjectProxy) {
+    return unwrap(obj.content);
+  } else {
+    return obj;
+  }
+}
+
+function flatten(source, prefix, target = {}) {
+  for (let key in source) {
+    let value = source[key];
+    let path =  A([prefix, key]).compact().join('.');
+    if (value instanceof Object && !(value instanceof Model)) {
+      flatten(value, path, target);
+    } else {
+      target[path] = value;
+    }
+  }
+  return target;
+}
 
 function saveInSequence(models, i = 0) {
   if (models.length === 0) {
