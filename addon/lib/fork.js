@@ -15,8 +15,6 @@ const Fork = ObjectProxy.extend({
     let changes = this.get('dbp').groupChanges((s) => unwrap(s) instanceof Model);
     let models = A(changes.map((c) => unwrap(c.content)));
 
-    console.log('changes', changes);
-
     let snapshot = this.snapshot();
 
     this.apply();
@@ -32,7 +30,6 @@ const Fork = ObjectProxy.extend({
   },
 
   restore(snapshot) {
-    console.log('flatten', flatten(snapshot.was));
     setProperties(this.get('dbp.content'), flatten(snapshot.was));
     setProperties(this, snapshot.is);
   },
