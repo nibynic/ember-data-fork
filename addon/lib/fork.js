@@ -31,7 +31,7 @@ const Fork = ObjectProxy.extend({
 
   restore(snapshot) {
     setProperties(this.get('dbp.content'), flatten(snapshot.was));
-    setProperties(this, snapshot.is);
+    setProperties(this, flatten(snapshot.is));
   },
 
   apply() {
