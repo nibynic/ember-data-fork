@@ -98,14 +98,14 @@ function flatten(source, prefix, target = {}) {
   return target;
 }
 
-function saveInSequence(models, i = 0) {
-  if (models.length === 0) {
-    return resolve();
-  } else {
-    return models[i].save().then(
-      () => i + 1 < models.length ? saveInSequence(models, i + 1) : models[i],
-      (error) => { throw error; }
-    );
+async function saveInSequence(models, i = 0) {
+  if (models.length > 0) {
+    await models[i].save();
+    if (i + 1 < models.length) {
+      return await saveInSequence(models, i + 1);
+    } else {
+      return models[i];
+    }
   }
 }
 
