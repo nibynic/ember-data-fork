@@ -86,6 +86,9 @@ function flatten(source, prefix, target = {}) {
   for (let key in source) {
     let value = source[key];
     let path =  A([prefix, key]).compact().join('.');
+    if (isArray(value)) {
+      target[path] = value;
+    }
     if (value instanceof Object && !(value instanceof Model)) {
       flatten(value, path, target);
     } else {

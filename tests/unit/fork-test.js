@@ -15,7 +15,9 @@ module('Unit | Model | Concerns | fork', function(hooks) {
       firstName: 'Jan',
       parent: this.store.createRecord('person', {
         firstName: 'Jack'
-      })
+      }),
+      children: [this.store.createRecord('person', { firstName: 'Ann' })],
+      interests: ['hockey'],
     });
     this.fork = Fork.wrap(this.model);
   });
@@ -73,10 +75,13 @@ module('Unit | Model | Concerns | fork', function(hooks) {
     test('it saves all changed records', async function (assert) {
       let modelSave = sinon.stub(this.model, 'save').returns(resolve());
       let parentSave = sinon.stub(this.model.parent.content, 'save').returns(resolve());
+      let childSave = sinon.stub(this.model.children.firstObject, 'save').returns(resolve());
 
       run(() => {
         this.fork.set('firstName', 'Teofil');
         this.fork.set('parent.firstName', 'Bruce');
+        this.fork.set('children.firstObject.firstName', 'Joanna');
+        this.fork.get('interests').addObject('nature');
       });
 
       this.fork.save().then(
@@ -87,8 +92,11 @@ module('Unit | Model | Concerns | fork', function(hooks) {
 
       assert.ok(modelSave.calledOnce);
       assert.ok(parentSave.calledOnce);
+      assert.ok(childSave.calledOnce);
       assert.equal(this.model.get('firstName'), 'Teofil');
       assert.equal(this.model.parent.get('firstName'), 'Bruce');
+      assert.equal(this.model.children.firstObject.get('firstName'), 'Joanna');
+      assert.deepEqual(this.model.get('interests'), ['hockey', 'nature']);
       assert.notOk(this.fork.get('isDirty'));
     });
 
@@ -98,6 +106,7 @@ module('Unit | Model | Concerns | fork', function(hooks) {
       run(() => {
         this.fork.set('firstName', 'Teofil');
         this.fork.set('parent.firstName', 'Bruce');
+        this.fork.get('interests').addObject('nature');
       });
 
       this.fork.save().then(
@@ -108,6 +117,8 @@ module('Unit | Model | Concerns | fork', function(hooks) {
 
       assert.equal(this.model.get('firstName'), 'Jan');
       assert.equal(this.model.get('parent.firstName'), 'Jack');
+      assert.equal(this.model.children.firstObject.get('firstName'), 'Ann');
+      assert.deepEqual(this.model.get('interests'), ['hockey']);
       assert.ok(this.fork.get('isDirty'));
     });
   });
