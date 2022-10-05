@@ -5472,10 +5472,10 @@ ember-data@~3.5.0:
     semver "^5.5.0"
     silent-error "^1.1.0"
 
-ember-deep-buffered-proxy@^0.0.8:
-  version "0.0.8"
-  resolved "https://registry.yarnpkg.com/ember-deep-buffered-proxy/-/ember-deep-buffered-proxy-0.0.8.tgz#5fee7089644b1681c957d2f4de8d162b27590392"
-  integrity sha512-g+dQW/gO09TQBzUoYicFhLyheC7bSTZ/lAgfgE/NCObKcY/i0aWx9D2cU2PWczL+oaA0ksEx4fSFal/xYJWgBQ==
+ember-deep-buffered-proxy@^0.0.9:
+  version "0.0.9"
+  resolved "https://registry.yarnpkg.com/ember-deep-buffered-proxy/-/ember-deep-buffered-proxy-0.0.9.tgz#e010bce66635ceef56ccdfc68ccaed135887165e"
+  integrity sha512-fpfhCe7tei5ls91mGQMBoWR9CLxA5jLaMKsOwEDh8KUBSn4kp3HVXjV0CjZ8qKEXpw2Vj0Zw6l6+KCdboaOHUg==
   dependencies:
     ember-cli-babel "^7.21.0"
     ember-cli-htmlbars "^5.2.0"

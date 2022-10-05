@@ -28,7 +28,7 @@
   "dependencies": {
     "ember-cli-babel": "^7.23.0",
     "ember-cli-htmlbars": "^5.3.1",
-    "ember-deep-buffered-proxy": "^0.0.8"
+    "ember-deep-buffered-proxy": "^0.0.9"
   },
   "devDependencies": {
     "@ember/optional-features": "^2.0.0",
