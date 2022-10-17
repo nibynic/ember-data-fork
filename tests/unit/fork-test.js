@@ -124,7 +124,7 @@ module('Unit | Model | Concerns | fork', function(hooks) {
   });
 
   module('deleting', function() {
-    test('it buffers deleteRecord calls', function (assert) {
+    test('it buffers deleteRecord calls', async function (assert) {
       let deleteSpy = sinon.spy(this.model, 'deleteRecord');
 
       assert.notOk(this.fork.get('isDeleted'));
@@ -136,7 +136,7 @@ module('Unit | Model | Concerns | fork', function(hooks) {
       assert.ok(this.fork.get('isDeleted'));
       assert.notOk(this.model.get('isDeleted'));
 
-      this.fork.apply();
+      await this.fork.apply();
 
       assert.ok(deleteSpy.calledOnce);
       assert.ok(this.fork.get('isDeleted'));

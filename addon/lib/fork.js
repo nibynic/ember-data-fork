@@ -1,5 +1,5 @@
-import { setProperties } from '@ember/object';
-import { reads, or } from '@ember/object/computed';
+import { setProperties, computed } from '@ember/object';
+import { reads } from '@ember/object/computed';
 import { ObjectProxy, ArrayProxy } from 'ember-deep-buffered-proxy';
 import { resolve } from 'rsvp';
 import { A, isArray } from '@ember/array';
@@ -47,10 +47,12 @@ const Fork = ObjectProxy.extend({
     this.notifyPropertyChange('markedForDeleteRecord');
   },
 
-  isDeleted: or('markedForDeleteRecord', 'dbp.content.isDeleted'),
+  isDeleted: computed('markedForDeleteRecord', 'dbp.content.isDeleted', function() {
+    return this.get('markedForDeleteRecord') || this.dbp.content.isDeleted;
+  }),
 
   rollbackDelete() {
-    assert('cannot rollback delete, model is already deleted', !this.get('dbp.content.isDeleted'));
+    assert('cannot rollback delete, model is already deleted', !this.dbp.content.isDeleted);
     this.set('markedForDeleteRecord', false);
     this.notifyPropertyChange('markedForDeleteRecord');
   }
